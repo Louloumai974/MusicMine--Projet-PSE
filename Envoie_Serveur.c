@@ -44,7 +44,7 @@ int main(int argc, char *argv[]){
                 fwrite(buff, 1, b, fp);
             }
 
-            printf("Received byte: %d\n",tot);
+            printf("File Send to MusicMine \n Received byte: %d\n",tot);
             if (b<0)
                perror("Receiving");
 
