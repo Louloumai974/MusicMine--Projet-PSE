@@ -9,7 +9,7 @@
 
 int Search(char SongName);
 void Add(char SongName,const char *FileName);
-void PlaySong(char SongName ); //convertir l'entrée
+int PlaySong(const char* SongName );
 
 
 int main(int argc, char *argv[]) {
