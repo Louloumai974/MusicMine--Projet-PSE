@@ -75,13 +75,7 @@ int Search(const char *SongName){
   }
 }
 
-void PlaySong(char SongName){
-  FMOD_System_CreateSound(system, "ma_musique.mp3", FMOD_SOFTWARE | FMOD_2D | FMOD_CREATESTREAM, 0, &sound);
-
-
-}
-
-int main(int argc, char *argv[])
+int PlaySong(const char* SongName)
 {
    int continuer = 1;
    SDL_Init(SDL_INIT_VIDEO);
@@ -96,7 +90,7 @@ int main(int argc, char *argv[])
    }
    Mix_VolumeMusic(MIX_MAX_VOLUME / 2); //Mettre le volume à la moitié
    Mix_Music *musique; //Création d'un pointeur de type Mix_Music
-   musique = Mix_LoadMUS("musique.mp3"); //Chargement de la musique
+   musique = Mix_LoadMUS(strcat(SongName,".mp3")); //Chargement de la musique
    Mix_PlayMusic(musique, -1); //Jouer infiniment la musique
    while(continuer)
    {
