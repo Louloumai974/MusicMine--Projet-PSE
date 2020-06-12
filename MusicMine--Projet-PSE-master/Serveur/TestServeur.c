@@ -13,10 +13,11 @@
 
 int main(int argc, char *argv[]){
 
-    int fd =0, confd = 0,b,tot;
+    int fd =0, confd = 0, b, tot;
     struct sockaddr_in serv_addr;
 
     char buff[1025];
+    int num;
 
     fd = socket(AF_INET, SOCK_STREAM, 0);
     printf("Socket created\n");
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]){
             perror("Accept");
             continue;
         }
-        FILE* fp = fopen( "lettre.mp3", "w");
+        FILE* fp = fopen( "lettre_copy.mp3", "wb");
         tot=0;
         if(fp != NULL){
             while( (b = recv(confd, buff, 1024,0))> 0 ) {
@@ -46,13 +47,16 @@ int main(int argc, char *argv[]){
             }
 
             printf("File Send to MusicMine \n Received byte: %d\n",tot);
-            if (b<0)
+            if (b<0){
                perror("Receiving");
+            }
 
             fclose(fp);
-        } else {
+        }
+        else{
             perror("File");
         }
+        printf("C fini\n");
         close(confd);
     }
 

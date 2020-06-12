@@ -21,68 +21,66 @@ int PlaySong( char* SongName );
 
 int main(int argc, char *argv[]){
 
-    int sfd =0, b;
-    char rbuff[1024];
-    char sendbuffer[100];
-	char SongName[100]; 
+  int sfd =0, b;
+  char* rbuff = (char*) malloc(1024*sizeof(char));
+  char* sendbuffer = (char*) malloc(100*sizeof(char));
+  char* SongName = (char*) malloc(100*sizeof(char)); 
 
-    struct sockaddr_in serv_addr;
+  struct sockaddr_in serv_addr;
 
-    memset(rbuff, '0', sizeof(rbuff));
-    sfd = socket(AF_INET, SOCK_STREAM, 0);
+  memset(rbuff, '0', sizeof(rbuff));
+  sfd = socket(AF_INET, SOCK_STREAM, 0);
 
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(5000);
-    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_port = htons(5000);
+  serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    b=connect(sfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-    if (b==-1) {
-        perror("Connect");
-        return 1;
-    }
-    char  action;
-    printf("---------- Menu----------\n0 - Rechercher une chanson \n1 - Ajouter une chanson \n2 - Jouer une chanson \n3 - Quitter \n");
-    fgets(&action,LIGNE_MAX,stdin);
-    switch(action){
-      case '0':
-        printf("Rechercher sur MusicMine le fichier : ");
-        fgets(SongName,LIGNE_MAX,stdin);
-        SearchSong(SongName);
-        break;
+  b = connect(sfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+  if (b==-1) {
+      perror("Connect");
+      return 1;
+  }
+  char  action;
+  printf("---------- Menu----------\n0 - Rechercher une chanson \n1 - Ajouter une chanson \n2 - Jouer une chanson \n3 - Quitter \n");
+  fgets(&action,LIGNE_MAX,stdin);
+  if (action == '0'){
+      printf("Rechercher sur MusicMine le fichier : ");
+      fgets(SongName,LIGNE_MAX,stdin);
+      SearchSong(SongName);
+  }
 
-      case '1':
-        printf("Ajouter sur MusicMine le fichier : ");
-        fgets(SongName,LIGNE_MAX,stdin);
-        printf("%s", SongName);
-        if (SearchSong(strcat(SongName, ".mp3")) == 1){
-          printf("on ajoute la chanson\n");
-          FILE *fp = fopen(SongName, "r");
-          if(fp == NULL){
-            perror("File");
-            return 2;
-          }
-          while( (b = fread(sendbuffer, 1, sizeof(sendbuffer), fp))>0 ){
-              send(sfd, sendbuffer, b, 0);
-          }
-        fclose(fp);
-        }
-        break;
-        
-      case '2':
-        printf("Jouer depuis MusicMine le fichier :");
-        fgets(SongName,LIGNE_MAX,stdin);
-        break;
-      
-      case '3' :
-        break;
-    }
+  else if (action == '1'){
+    printf("Ajouter sur MusicMine le fichier : ");
+    //fgets(SongName, LIGNE_MAX, stdin);
+    strcpy(SongName, "lettre.mp3");
+    const char* Song = SongName;
+    printf("%s\n", SongName);
+    //if (SearchSong(SongName) == 1){
+      printf("On ajoute la chanson.\n");
+      FILE *fp = fopen("lettre.mp3", "r+");
+      if(fp == NULL){
+        perror("File");
+        return 2;
+      }
+      while( (b = fread(sendbuffer, 1, sizeof(sendbuffer), fp))>0 ){
+        send(sfd, sendbuffer, b, 0);
+      }
+    
+    fclose(fp);
+    //}
+  } 
+
+  else if (action == '2'){
+    printf("Jouer depuis MusicMine le fichier :");
+    fgets(SongName,LIGNE_MAX,stdin);
+  }
 }
 
 
 int SearchSong( char *SongName){
   struct stat *buf; 
   buf = (struct stat *) malloc(sizeof(struct stat)); 
-  int res = stat(strcat(SongName, ".mp3"), buf);
+  int res = stat(SongName, buf);
   if (res == 0){
     printf(" La chanson est dans le repertoire.\n");
     return 0;
@@ -108,7 +106,7 @@ int PlaySong( char* SongName)
    }
    Mix_VolumeMusic(MIX_MAX_VOLUME / 2); //Mettre le volume à la moitié
    Mix_Music *musique; //Création d'un pointeur de type Mix_Music
-   musique = Mix_LoadMUS(strcat(SongName, ".mp3")); //Chargement de la musique
+   musique = Mix_LoadMUS(SongName); //Chargement de la musique
    Mix_PlayMusic(musique, -1); //Jouer infiniment la musique
    while(continuer)
    {
