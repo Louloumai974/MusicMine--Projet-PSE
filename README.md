@@ -1,4 +1,4 @@
-Pour pouvoir utiliser notre application *** vous devez au préalable télécharger SDL et SDL-Mixer 
+Pour pouvoir utiliser notre application MusicMine vous devez au préalable télécharger SDL et SDL-Mixer 
 
 Installer SDL:
 sudo apt-get install libsdl1.2-dev
